@@ -1,5 +1,10 @@
 # [koishi-plugin-chatgpt](https://chatgpt.koishi.chat)
 
+[![downloads](https://img.shields.io/npm/dm/koishi-plugin-chatgpt?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-chatgpt)
+[![npm](https://img.shields.io/npm/v/koishi-plugin-chatgpt?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-chatgpt)
+
+基于 ChatGPT 的 AI 对话插件。
+
 ## 使用教程
 
 搭建教程、使用方法、参数配置、常见问题请见：<https://chatgpt.koishi.chat>

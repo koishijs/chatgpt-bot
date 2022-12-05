@@ -18,10 +18,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/koishijs/koishi-plugin-chatgpt.git"
+    "url": "git+https://github.com/koishijs/chatgpt-bot.git"
   },
   "bugs": {
-    "url": "https://github.com/koishijs/koishi-plugin-chatgpt/issues"
+    "url": "https://github.com/koishijs/chatgpt-bot/issues"
   },
   "homepage": "https://chatgpt.koishi.chat",
   "scripts": {

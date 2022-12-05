@@ -2,7 +2,7 @@ import { defineConfig } from '@koishijs/vitepress'
 
 export default defineConfig({
   lang: 'zh-CN',
-  title: 'koishi-plugin-chatgpt',
+  title: 'ChatGPT Bot',
   description: '基于 ChatGPT 的 AI 对话机器人',
 
   head: [
@@ -25,5 +25,13 @@ export default defineConfig({
         { text: '支持作者', link: 'https://afdian.net/a/shigma' },
       ],
     }],
+
+    socialLinks: {
+      github: 'https://github.com/koishijs/chatgpt-bot',
+    },
+
+    editLink: {
+      pattern: 'https://github.com/koishijs/chatgpt-bot/edit/master/docs/:path',
+    },
   },
 })
