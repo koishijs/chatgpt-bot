@@ -8,9 +8,9 @@ export interface Config {
 }
 
 export const Config: Schema<Config> = Schema.object({
-  token: Schema.string().description('OpenAI 的 Session Token').required(),
-  appellation: Schema.boolean().description('是否使用称呼触发对话'),
-  prefix: Schema.string().description('使用特定前缀触发对话'),
+  token: Schema.string().description('ChatGPT 会话令牌。').required(),
+  appellation: Schema.boolean().description('是否使用称呼触发对话。').default(true),
+  prefix: Schema.string().description('使用特定前缀触发对话。').default('!'),
 })
 
 export function apply(ctx: Context, config: Config) {
