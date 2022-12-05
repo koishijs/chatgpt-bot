@@ -10,7 +10,7 @@ export const Config: Schema<Config> = Schema.object({
 })
 
 export function apply(ctx: Context, config: Config) {
-  ctx.i18n.define('zh', require('./locales/zh-CN.yml'))
+  ctx.i18n.define('zh', require('./locales/zh-CN'))
 
   const api = new ChatGPTAPI({ sessionToken: config.token, markdown: false })
 
