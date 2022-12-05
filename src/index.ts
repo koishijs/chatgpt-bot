@@ -1,4 +1,4 @@
-import { ChatGPTAPI } from 'chatgpt'
+import { ChatGPTAPI } from 'node-chatgpt'
 import { Context, Schema } from 'koishi'
 
 export interface Config {
