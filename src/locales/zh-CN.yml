@@ -1,0 +1,6 @@
+commands:
+  chatgpt:
+    description: AI 聊天
+
+    messages:
+      invalid-token: Session Token 无效，请联系管理员。

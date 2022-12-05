@@ -1,0 +1,53 @@
+{
+  "name": "koishi-plugin-chatgpt",
+  "description": "Conversation with AI",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": {
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koishijs/koishi-plugin-chatgpt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/koishijs/koishi-plugin-chatgpt/issues"
+  },
+  "homepage": "https://github.com/koishijs/koishi-plugin-chatgpt",
+  "scripts": {
+    "build": "atsc -b"
+  },
+  "koishi": {
+    "description": {
+      "en": "Conversation with AI",
+      "zh": "AI 对话"
+    }
+  },
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "plugin",
+    "ai",
+    "chatgpt",
+    "openai"
+  ],
+  "peerDependencies": {
+    "koishi": "^4.10.4"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.45",
+    "atsc": "^1.2.1",
+    "koishi": "^4.10.4",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "chatgpt": "^1.1.3"
+  }
+}
