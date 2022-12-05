@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-chatgpt",
-  "description": "Conversation with AI",
+  "description": "AI conversation based on ChatGPT",
   "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -26,8 +26,8 @@
   },
   "koishi": {
     "description": {
-      "en": "Conversation with AI",
-      "zh": "AI 对话"
+      "en": "AI conversation based on ChatGPT",
+      "zh": "基于 ChatGPT 的 AI 对话"
     }
   },
   "keywords": [
@@ -36,7 +36,11 @@
     "plugin",
     "ai",
     "chatgpt",
-    "openai"
+    "openai",
+    "gpt",
+    "conversation",
+    "dialogue",
+    "chat"
   ],
   "peerDependencies": {
     "koishi": "^4.10.4"

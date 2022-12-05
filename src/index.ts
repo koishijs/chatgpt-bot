@@ -20,9 +20,9 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.middleware(async (session, next) => {
     if (session.parsed?.appel) {
-      session.execute('chatgpt ' + session.parsed.content)
+      return session.execute('chatgpt ' + session.parsed.content)
     } else if (config.prefix && session.content.startsWith(config.prefix)) {
-      session.execute('chatgpt ' + session.content.slice(config.prefix.length))
+      return session.execute('chatgpt ' + session.content.slice(config.prefix.length))
     } else {
       return next()
     }
