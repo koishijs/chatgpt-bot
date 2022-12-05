@@ -1,11 +1,20 @@
-# koishi-plugin-chatgpt
+# [koishi-plugin-chatgpt](https://chatgpt.koishi.chat)
 
 ## 使用教程
 
-1. 通过 <https://chat.openai.com/chat> 注册并登录。
-2. 打开浏览器开发者工具，切换到 Application 标签页。
-3. 在左侧的 Storage - Cookies 中找到 `__Secure-next-auth.session-token` 一行并复制其值。
-4. 将值填写到 `token` 字段并启用插件。
+搭建教程、使用方法、参数配置、常见问题请见：<https://chatgpt.koishi.chat>
 
-![Session Token](./session-token.png)
-*Image adapted from https://github.com/transitive-bullshit/chatgpt-api*
+## License
+
+使用 [MIT](./LICENSE) 许可证发布。
+
+```
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkoishijs%2Fnovelai-bot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkoishijs%2Fnovelai-bot?ref=badge_large)
