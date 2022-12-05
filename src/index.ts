@@ -5,7 +5,7 @@ export interface Config {
   token: string
 }
 
-export const Config = Schema.object({
+export const Config: Schema<Config> = Schema.object({
   token: Schema.string().description('OpenAI 的 Session Token').required(),
 })
 
