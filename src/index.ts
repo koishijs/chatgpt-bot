@@ -1,9 +1,13 @@
 import { ChatGPTAPI } from 'chatgpt'
-import { Context } from 'koishi'
+import { Context, Schema } from 'koishi'
 
 export interface Config {
   token: string
 }
+
+export const Config = Schema.object({
+  token: Schema.string().description('OpenAI 的 Session Token').required(),
+})
 
 export function apply(ctx: Context, config: Config) {
   ctx.i18n.define('zh', require('./locales/zh-CN.yml'))
