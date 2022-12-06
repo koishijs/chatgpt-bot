@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-chatgpt",
   "description": "AI conversation based on ChatGPT",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -63,8 +63,7 @@
   "dependencies": {
     "eventsource-parser": "^0.0.5",
     "expiry-map": "^2.0.0",
-    "remark": "^13.0.0",
-    "strip-markdown": "^4.2.0",
+    "marked": "^4.2.3",
     "uuid": "^9.0.0"
   }
 }

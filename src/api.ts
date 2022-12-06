@@ -5,7 +5,7 @@ import internal, { Writable } from 'stream'
 import { v4 as uuidv4 } from 'uuid'
 
 import * as types from './types'
-import { markdownToText } from './utils'
+import { transform } from './utils'
 
 const KEY_ACCESS_TOKEN = 'accessToken'
 
@@ -98,7 +98,7 @@ class ChatGPT {
 
               if (text) {
                 if (!this.config.markdown) {
-                  text = markdownToText(text)
+                  text = transform(text)
                 }
 
                 response = text
