@@ -1,6 +1,6 @@
 import ExpiryMap from 'expiry-map'
 import { createParser } from 'eventsource-parser'
-import { Context, Quester, Schema } from 'koishi'
+import { Context, Dict, Quester, Schema } from 'koishi'
 import internal, { Writable } from 'stream'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -21,11 +21,7 @@ class ChatGPT {
   protected _accessTokenCache = new ExpiryMap<string, string>(10 * 1000)
 
   constructor(ctx: Context, public config: ChatGPT.Config) {
-    this.http = ctx.http.extend({
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
-      },
-    })
+    this.http = ctx.http.extend(config)
   }
 
   async getIsAuthenticated() {
@@ -154,12 +150,18 @@ namespace ChatGPT {
   export interface Config {
     sessionToken: string
     markdown?: boolean
+    headers?: Dict<string>
+    proxyAgent?: string
   }
 
   export const Config: Schema<Config> = Schema.object({
     sessionToken: Schema.string().description('ChatGPT 会话令牌。').required(),
+    headers: Schema.dict(String).description('要附加的额外请求头。').default({
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+    }),
+    proxyAgent: Schema.string().role('link').description('使用的代理服务器地址。'),
     markdown: Schema.boolean().hidden().default(false),
-  })
+  }).description('登录设置')
 }
 
 export default ChatGPT

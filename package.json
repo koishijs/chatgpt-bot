@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-chatgpt",
   "description": "AI conversation based on ChatGPT",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
