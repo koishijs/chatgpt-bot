@@ -61,6 +61,7 @@
     "vitepress": "1.0.0-alpha.26"
   },
   "dependencies": {
+    "eventsource-parser": "^0.0.5",
     "expiry-map": "^2.0.0",
     "remark": "^13.0.0",
     "strip-markdown": "^4.2.0",

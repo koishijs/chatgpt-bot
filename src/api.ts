@@ -1,8 +1,11 @@
 import ExpiryMap from 'expiry-map'
+import { createParser } from 'eventsource-parser'
 import { Context, Quester, Schema } from 'koishi'
+import internal, { Writable } from 'stream'
 import { v4 as uuidv4 } from 'uuid'
 
 import * as types from './types'
+import { markdownToText } from './utils'
 
 const KEY_ACCESS_TOKEN = 'accessToken'
 
@@ -68,14 +71,50 @@ class ChatGPT {
 
     const url = `https://chat.openai.com/backend-api/conversation`
 
-    const { data } = await this.http.axios(url, {
+    const { data } = await this.http.axios<internal.Readable>(url, {
       method: 'POST',
+      responseType: 'stream',
       data: body,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-    return data
+
+    let response = ''
+    return await new Promise<string>((resolve, reject) => {
+      const parser = createParser((event) => {
+        if (event.type === 'event') {
+          const { data } = event
+          if (data === '[DONE]') {
+            return resolve(response)
+          }
+          try {
+            const parsedData: types.ConversationResponseEvent = JSON.parse(data)
+            const message = parsedData.message
+
+            if (message) {
+              let text = message?.content?.parts?.[0]
+
+              if (text) {
+                if (!this.config.markdown) {
+                  text = markdownToText(text)
+                }
+
+                response = text
+              }
+            }
+          } catch (err) {
+            reject(err)
+          }
+        }
+      })
+      data.pipe(new Writable({
+        write(chunk: string | Buffer, _encoding, cb) {
+          parser.feed(chunk.toString())
+          cb()
+        },
+      }))
+    })
   }
 
   async refreshAccessToken(): Promise<string> {
