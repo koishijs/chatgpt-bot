@@ -2,6 +2,9 @@ commands:
   chatgpt:
     description: AI 聊天
 
+    options:
+      reset: 重置对话
+
     messages:
       invalid-token: 会话令牌无效，请联系管理员。
       unknown-error: 发生未知错误。
