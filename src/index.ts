@@ -19,6 +19,8 @@ export const Config: Schema<Config> = Schema.intersect([
   }),
 ])
 
+const conversations = new Map<string, string>()
+
 export function apply(ctx: Context, config: Config) {
   ctx.i18n.define('zh', require('./locales/zh-CN'))
 
@@ -36,7 +38,13 @@ export function apply(ctx: Context, config: Config) {
   })
 
   ctx.command('chatgpt')
-    .action(async ({ session }, input) => {
+    .option('reset', '-r')
+    .action(async ({ options, session }, input) => {
+      if (options?.reset) {
+        conversations.delete(session.uid)
+        return session.text('.reset-success')
+      }
+
       try {
         // ensure the API is properly authenticated (optional)
         await api.ensureAuth()
@@ -46,8 +54,10 @@ export function apply(ctx: Context, config: Config) {
 
       try {
         // send a message and wait for the response
-        const response = await api.sendMessage(input)
-        return response
+        const conversationId = conversations.get(session.uid)
+        const response = await api.sendMessage({ message: input, id: conversationId })
+        conversations.set(session.uid, response.id)
+        return response.message
       } catch (error) {
         logger.warn(error)
         throw new SessionError('commands.chatgpt.messages.unknown-error')

@@ -9,6 +9,11 @@ import { markdownToText } from './utils'
 
 const KEY_ACCESS_TOKEN = 'accessToken'
 
+export interface Conversation {
+  id?: string
+  message: string
+}
+
 class ChatGPT {
   protected http: Quester
   // stores access tokens for up to 10 seconds before needing to refresh
@@ -41,23 +46,18 @@ class ChatGPT {
    *
    * @param message - The plaintext message to send.
    * @param opts.conversationId - Optional ID of the previous message in a conversation
-   * @param opts.onProgress - Optional listener which will be called every time the partial response is updated
    */
-  async sendMessage(
-    message: string,
-    opts: {
-      converstationId?: string
-    } = {},
-  ): Promise<string> {
-    const { converstationId = uuidv4() } = opts
+  async sendMessage(conversation: Conversation): Promise<Required<Conversation>> {
+    const { id = uuidv4(), message } = conversation
 
     const accessToken = await this.refreshAccessToken()
 
+    const newId = uuidv4()
     const body: types.ConversationJSONBody = {
       action: 'next',
       messages: [
         {
-          id: uuidv4(),
+          id: newId,
           role: 'user',
           content: {
             content_type: 'text',
@@ -66,7 +66,7 @@ class ChatGPT {
         },
       ],
       model: 'text-davinci-002-render',
-      parent_message_id: converstationId,
+      parent_message_id: id,
     }
 
     const url = `https://chat.openai.com/backend-api/conversation`
@@ -81,12 +81,12 @@ class ChatGPT {
     })
 
     let response = ''
-    return await new Promise<string>((resolve, reject) => {
+    return await new Promise<Required<Conversation>>((resolve, reject) => {
       const parser = createParser((event) => {
         if (event.type === 'event') {
           const { data } = event
           if (data === '[DONE]') {
-            return resolve(response)
+            return resolve({ message: response, id: newId })
           }
           try {
             const parsedData: types.ConversationResponseEvent = JSON.parse(data)
