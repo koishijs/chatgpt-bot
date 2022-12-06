@@ -10,7 +10,8 @@ import { markdownToText } from './utils'
 const KEY_ACCESS_TOKEN = 'accessToken'
 
 export interface Conversation {
-  id?: string
+  conversationId?: string
+  messageId?: string
   message: string
 }
 
@@ -48,16 +49,16 @@ class ChatGPT {
    * @param opts.conversationId - Optional ID of the previous message in a conversation
    */
   async sendMessage(conversation: Conversation): Promise<Required<Conversation>> {
-    const { id = uuidv4(), message } = conversation
+    const { conversationId, messageId = uuidv4(), message } = conversation
 
     const accessToken = await this.refreshAccessToken()
 
-    const newId = uuidv4()
     const body: types.ConversationJSONBody = {
       action: 'next',
+      conversation_id: conversationId,
       messages: [
         {
-          id: newId,
+          id: uuidv4(),
           role: 'user',
           content: {
             content_type: 'text',
@@ -66,7 +67,7 @@ class ChatGPT {
         },
       ],
       model: 'text-davinci-002-render',
-      parent_message_id: id,
+      parent_message_id: messageId,
     }
 
     const url = `https://chat.openai.com/backend-api/conversation`
@@ -82,17 +83,21 @@ class ChatGPT {
 
     let response = ''
     return await new Promise<Required<Conversation>>((resolve, reject) => {
+      let messageId: string
+      let conversationId: string
       const parser = createParser((event) => {
         if (event.type === 'event') {
           const { data } = event
           if (data === '[DONE]') {
-            return resolve({ message: response, id: newId })
+            return resolve({ message: response, messageId, conversationId })
           }
           try {
             const parsedData: types.ConversationResponseEvent = JSON.parse(data)
             const message = parsedData.message
+            conversationId = parsedData.conversation_id
 
             if (message) {
+              messageId = message?.id
               let text = message?.content?.parts?.[0]
 
               if (text) {
