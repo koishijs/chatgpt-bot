@@ -3,4 +3,5 @@ commands:
     description: AI 聊天
 
     messages:
-      invalid-token: Session Token 无效，请联系管理员。
+      invalid-token: 会话令牌无效，请联系管理员。
+      unknown-error: 发生未知错误。
