@@ -1,6 +1,6 @@
 import ExpiryMap from 'expiry-map'
 import { createParser } from 'eventsource-parser'
-import { Context, Dict, Quester, Schema } from 'koishi'
+import { Context, Dict, Quester, Schema, SessionError } from 'koishi'
 import internal, { Writable } from 'stream'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -68,14 +68,29 @@ class ChatGPT {
 
     const url = `https://chat.openai.com/backend-api/conversation`
 
-    const { data } = await this.http.axios<internal.Readable>(url, {
-      method: 'POST',
-      responseType: 'stream',
-      data: body,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
+    let data: internal.Readable
+    try {
+      const resp = await this.http.axios<internal.Readable>(url, {
+        method: 'POST',
+        responseType: 'stream',
+        data: body,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      data = resp.data
+    } catch (err) {
+      if (Quester.isAxiosError(err)) {
+        switch (err.response?.status) {
+          case 500:
+          case 503:
+            throw new SessionError('commands.chatgpt.messages.service-unavailable')
+          default:
+            throw err
+        }
+      }
+    }
 
     let response = ''
     return await new Promise<Required<Conversation>>((resolve, reject) => {

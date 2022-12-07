@@ -9,3 +9,4 @@ commands:
       invalid-token: 会话令牌无效，请联系管理员。
       unknown-error: 发生未知错误。
       reset-success: 已重置对话。
+      service-unavailable: 当前服务不可用 ({0})。请稍后再试。
