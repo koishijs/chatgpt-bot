@@ -6,6 +6,7 @@ commands:
       reset: 重置对话
 
     messages:
+      expect-prompt: 您想对我说什么呢？
       invalid-token: 会话令牌无效，请联系管理员。
       unknown-error: 发生未知错误。
       reset-success: 已重置对话。
