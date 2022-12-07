@@ -28,23 +28,27 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.middleware(async (session, next) => {
     if (session.parsed?.appel) {
-      return session.execute('chatgpt ' + session.parsed.content)
+      return session.execute('chat ' + session.parsed.content)
     }
     for (const prefix of config.prefix) {
       if (!prefix || !session.content.startsWith(prefix)) continue
-      return session.execute('chatgpt ' + session.content.slice(config.prefix.length))
+      return session.execute('chat ' + session.content.slice(config.prefix.length))
     }
     return next()
   })
 
-  ctx.command('chatgpt <input:text>')
+  ctx.command('chatgpt')
     .option('reset', '-r')
-    .action(async ({ options, session }, input) => {
+    .action(async ({ options, session }) => {
       if (options?.reset) {
         conversations.delete(session.uid)
         return session.text('.reset-success')
       }
+      return session.execute('help chatgpt')
+    })
 
+  ctx.command('chatgpt/chat <input:text>')
+    .action(async ({ session }, input) => {
       input = input.trim()
       if (!input) {
         await session.send(session.text('.expect-prompt'))
