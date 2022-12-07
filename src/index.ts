@@ -3,13 +3,13 @@ import { Context, Logger, Schema, Session, SessionError } from 'koishi'
 
 const logger = new Logger('chatgpt')
 
-const conversationContext = ['user', 'channel', 'both'] as const
-export type ConversationContext = typeof conversationContext[number]
+const interaction = ['user', 'channel', 'both'] as const
+export type ContextInteraction = typeof interaction[number]
 
 export interface Config extends ChatGPT.Config {
   appellation: boolean
   prefix: string[]
-  conversationContext: ConversationContext
+  interaction: ContextInteraction
 }
 
 export const Config: Schema<Config> = Schema.intersect([
@@ -20,7 +20,7 @@ export const Config: Schema<Config> = Schema.intersect([
       Schema.array(String),
       Schema.transform(String, (prefix) => [prefix]),
     ] as const).description('使用特定前缀触发对话。').default(['!', '！']),
-    conversationContext: Schema.union([
+    interaction: Schema.union([
       Schema.const('user' as const).description('用户独立'),
       Schema.const('channel' as const).description('频道独立'),
       Schema.const('both' as const).description('频道内用户独立'),
@@ -35,8 +35,8 @@ export function apply(ctx: Context, config: Config) {
 
   const api = new ChatGPT(ctx, config)
 
-  const getMapKey = (() => {
-    switch (config.conversationContext) {
+  const getContextResolver = (() => {
+    switch (config.interaction) {
       case 'user':
         return (session: Session) => session.uid
       case 'channel':
@@ -60,7 +60,7 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('chatgpt <input:text>')
     .option('reset', '-r')
     .action(async ({ options, session }, input) => {
-      const mapKey = getMapKey(session)
+      const mapKey = getContextResolver(session)
 
       if (options?.reset) {
         conversations.delete(mapKey)
