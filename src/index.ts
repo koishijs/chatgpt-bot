@@ -21,10 +21,10 @@ export const Config: Schema<Config> = Schema.intersect([
       Schema.transform(String, (prefix) => [prefix]),
     ] as const).description('使用特定前缀触发对话。').default(['!', '！']),
     conversationContext: Schema.union([
-      Schema.const('user').description('用户独立'),
-      Schema.const('channel').description('频道独立'),
-      Schema.const('both').description('频道内用户独立'),
-    ]).description('对话历史上下文缓存方式。').default('channel')
+      Schema.const('user' as const).description('用户独立'),
+      Schema.const('channel' as const).description('频道独立'),
+      Schema.const('both' as const).description('频道内用户独立'),
+    ]).description('对话历史上下文缓存方式。').default('channel'),
   }),
 ])
 
