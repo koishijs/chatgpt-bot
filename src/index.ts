@@ -37,12 +37,18 @@ export function apply(ctx: Context, config: Config) {
     return next()
   })
 
-  ctx.command('chatgpt')
+  ctx.command('chatgpt <input:text>')
     .option('reset', '-r')
     .action(async ({ options, session }, input) => {
       if (options?.reset) {
         conversations.delete(session.uid)
         return session.text('.reset-success')
+      }
+
+      input = input.trim()
+      if (!input) {
+        await session.send(session.text('.expect-prompt'))
+        input = await session.prompt()
       }
 
       try {
