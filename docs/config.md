@@ -9,6 +9,13 @@
 
 ChatGPT 会话令牌。
 
+### endpoint
+
+- 类型：`string`
+- 默认值：`https://chat.openai.com/`
+
+ChatGPT API 的地址。
+
 ### headers
 
 - 类型：`Dict<string>`
