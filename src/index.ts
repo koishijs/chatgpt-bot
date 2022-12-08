@@ -35,16 +35,17 @@ export function apply(ctx: Context, config: Config) {
 
   const api = new ChatGPT(ctx, config)
 
-  const getContextResolver = (() => {
+  const getContextResolver = (session: Session, config: Config) => {
     switch (config.interaction) {
       case 'user':
-        return (session: Session) => session.uid
+        return session.uid
       case 'channel':
-        return (session: Session) => session.cid
+        return session.cid
       case 'both':
-        return (session: Session) => `${session.cid}:${session.uid}`
+        const { platform, channelId, userId } = session
+        return `${platform}:${channelId}:${userId}`
     }
-  })()
+  }
 
   ctx.middleware(async (session, next) => {
     if (session.parsed?.appel) {
@@ -60,10 +61,10 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('chatgpt <input:text>')
     .option('reset', '-r')
     .action(async ({ options, session }, input) => {
-      const mapKey = getContextResolver(session)
+      const resolver = getContextResolver(session, config)
 
       if (options?.reset) {
-        conversations.delete(mapKey)
+        conversations.delete(resolver)
         return session.text('.reset-success')
       }
 
@@ -82,9 +83,9 @@ export function apply(ctx: Context, config: Config) {
 
       try {
         // send a message and wait for the response
-        const { conversationId, messageId } = conversations.get(mapKey) ?? {}
+        const { conversationId, messageId } = conversations.get(resolver) ?? {}
         const response = await api.sendMessage({ message: input, conversationId, messageId })
-        conversations.set(mapKey, { conversationId: response.conversationId, messageId: response.messageId })
+        conversations.set(resolver, { conversationId: response.conversationId, messageId: response.messageId })
         return response.message
       } catch (error) {
         logger.warn(error)
