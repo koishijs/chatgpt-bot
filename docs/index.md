@@ -5,7 +5,7 @@
 ## 搭建教程
 
 1. 通过 <https://chat.openai.com/chat> 注册并登录。
-2. 打开浏览器开发者工具，切换到 Application 标签页。
+2. 按 F12 键打开浏览器开发者工具，切换到【应用 (Application)】标签页。
 3. 在左侧的 Storage - Cookies 中找到 `__Secure-next-auth.session-token` 一行并复制其值。
 4. 将值填写到 `sessionToken` 字段并启用插件。
 
@@ -13,7 +13,7 @@
 
 此插件有三种使用方法：
 
-1. 调用指令 `chatgpt` 进行交互
+1. 调用子指令 `chat` 进行交互
 2. 任何带有称呼的消息都会被回复，称呼全局的 `nickname` 配置项设置
 3. 任何带有前缀的消息都会被回复，前缀默认为 `!`，可通过插件的 `prefix` 配置项设置
 
