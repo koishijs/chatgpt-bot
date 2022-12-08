@@ -62,7 +62,7 @@ export function apply(ctx: Context, config: Config) {
     }
     for (const prefix of config.prefix) {
       if (!prefix || !session.content.startsWith(prefix)) continue
-      return session.execute('chatgpt ' + session.content.slice(config.prefix.length))
+      return session.execute('chatgpt ' + session.content.slice(prefix.length))
     }
     return next()
   })
