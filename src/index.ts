@@ -20,6 +20,15 @@ export const Config: Schema<Config> = Schema.intersect([
       Schema.array(String),
       Schema.transform(String, (prefix) => [prefix]),
     ] as const).description('使用特定前缀触发对话。').default(['!', '！']),
+    /**
+     * Configure how to share the conversation context between users:
+     * 
+     * - `user`: every user has its own context, across all channels
+     * - `channel`: every channel has its own context, no matter which user is talking
+     * - `both`: every user has its own context in each channel
+     * 
+     * @see https://github.com/koishijs/chatgpt-bot/pull/15
+     */
     interaction: Schema.union([
       Schema.const('user' as const).description('用户上下文'),
       Schema.const('channel' as const).description('频道上下文'),
