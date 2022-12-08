@@ -10,6 +10,6 @@ commands:
       invalid-token: 会话令牌无效，请联系管理员。
       unknown-error: 发生未知错误。
       reset-success: 已重置对话。
-      unauthorized: 未授权的请求，可能由于会话令牌过期所致。请联系管理员。
+      unauthorized: 请求被拒绝，可能由于会话令牌过期所致。请联系管理员。
       too-many-requests: 请求过于频繁。请稍后再试。
       service-unavailable: 当前服务不可用 ({0})。请稍后再试。
