@@ -64,7 +64,7 @@ export function apply(ctx: Context, config: Config) {
       // ensure the API is properly authenticated (optional)
       await api.ensureAuth()
     } catch (err) {
-      return session.text('.invalid-token')
+      throw new SessionError('commands.chatgpt.messages.invalid-token')
     }
 
     try {
