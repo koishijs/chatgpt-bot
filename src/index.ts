@@ -4,12 +4,12 @@ import { Context, Logger, Schema, Session, SessionError } from 'koishi'
 const logger = new Logger('chatgpt')
 
 const interaction = ['user', 'channel', 'both'] as const
-export type ContextInteraction = typeof interaction[number]
+export type Interaction = typeof interaction[number]
 
 export interface Config extends ChatGPT.Config {
   appellation: boolean
   prefix: string[]
-  interaction: ContextInteraction
+  interaction: Interaction
 }
 
 export const Config: Schema<Config> = Schema.intersect([
