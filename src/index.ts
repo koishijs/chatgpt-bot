@@ -57,6 +57,7 @@ export function apply(ctx: Context, config: Config) {
   }
 
   const getResponse = async (prompt: string, session: Session, config: Config) => {
+    if (!prompt) return
     const key = getContextKey(session, config)
 
     try {
