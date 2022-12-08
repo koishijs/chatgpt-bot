@@ -99,7 +99,7 @@ export function apply(ctx: Context, config: Config) {
       } catch (error) {
         logger.warn(error)
         if (error instanceof SessionError) throw error
-        else throw new SessionError('commands.chatgpt.messages.unknown-error')
+        throw new SessionError('commands.chatgpt.messages.unknown-error')
       }
     })
 }
