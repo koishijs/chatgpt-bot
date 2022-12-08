@@ -13,4 +13,4 @@ commands:
       unauthorized: 请求被拒绝，可能由于会话令牌过期所致。请联系管理员。
       conversation-not-found: 未找到会话，请联系管理员或使用 chatgpt -r 重置会话。
       too-many-requests: 请求过于频繁。请稍后再试。
-      service-unavailable: 当前服务不可用 ({0})。请稍后再试。
+      service-unavailable: 当前服务不可用 ({code})。请稍后再试。

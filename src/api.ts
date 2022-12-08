@@ -91,7 +91,7 @@ class ChatGPT {
             throw new SessionError('commands.chatgpt.messages.too-many-requests')
           case 500:
           case 503:
-            throw new SessionError('commands.chatgpt.messages.service-unavailable')
+            throw new SessionError('commands.chatgpt.messages.service-unavailable', {code: err.response.status})
           default:
             throw err
         }
