@@ -100,7 +100,7 @@ export function apply(ctx: Context, config: Config) {
       return session.execute('help chatgpt')
     })
 
-    ctx.command('chatgpt/chat <input:text>')
+  ctx.command('chatgpt/chat <input:text>')
     .action(async ({ session }, input) => {
       input = input?.trim()
       if (!input) {
