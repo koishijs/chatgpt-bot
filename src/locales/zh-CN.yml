@@ -2,6 +2,11 @@ commands:
   chatgpt:
     description: AI 聊天
 
+    usage: |
+      调用 chat 子指令加上你的问题，与 ChatGPT 机器人聊天。
+      也可以通过昵称和特定前缀唤起机器人。
+      快来给仓库点一个 star 吧：https://github.com/koishijs/chatgpt-bot
+
     options:
       reset: 重置对话
 
