@@ -85,9 +85,15 @@ class ChatGPT {
     } catch (err) {
       if (Quester.isAxiosError(err)) {
         switch (err.response?.status) {
+          case 401:
+            throw new SessionError('commands.chatgpt.messages.unauthorized')
+          case 404:
+            throw new SessionError('commands.chatgpt.messages.conversation-not-found')
+          case 429:
+            throw new SessionError('commands.chatgpt.messages.too-many-requests')
           case 500:
           case 503:
-            throw new SessionError('commands.chatgpt.messages.service-unavailable')
+            throw new SessionError('commands.chatgpt.messages.service-unavailable', [err.response.status])
           default:
             throw err
         }
@@ -173,7 +179,7 @@ namespace ChatGPT {
   }
 
   export const Config: Schema<Config> = Schema.object({
-    sessionToken: Schema.string().description('ChatGPT 会话令牌。').required(),
+    sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌。').required(),
     endpoint: Schema.string().description('ChatGPT API 的地址。').default('https://chat.openai.com'),
     headers: Schema.dict(String).description('要附加的额外请求头。').default({
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',

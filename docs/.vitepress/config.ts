@@ -17,6 +17,7 @@ export default defineConfig({
       items: [
         { text: '介绍', link: '/' },
         { text: '配置项', link: '/config' },
+        { text: '对话上下文', link: '/context' },
       ],
     }, {
       text: '更多',
