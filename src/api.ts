@@ -85,6 +85,8 @@ class ChatGPT {
         switch (err.response?.status) {
           case 401:
             throw new SessionError('commands.chatgpt.messages.unauthorized')
+          case 404:
+            throw new SessionError('commands.chatgpt.messages.conversation-not-found')
           case 429:
             throw new SessionError('commands.chatgpt.messages.too-many-requests')
           case 500:
