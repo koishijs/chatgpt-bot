@@ -56,13 +56,35 @@ export function apply(ctx: Context, config: Config) {
     }
   }
 
+  const getResponse = async (prompt: string, session: Session, config: Config) => {
+    const key = getContextKey(session, config)
+
+    try {
+      // ensure the API is properly authenticated (optional)
+      await api.ensureAuth()
+    } catch (err) {
+      return session.text('.invalid-token')
+    }
+
+    try {
+      // send a message and wait for the response
+      const { conversationId, messageId } = conversations.get(key) ?? {}
+      const response = await api.sendMessage({ message: prompt, conversationId, messageId })
+      conversations.set(key, { conversationId: response.conversationId, messageId: response.messageId })
+      return response.message
+    } catch (error) {
+      logger.warn(error)
+      throw new SessionError('commands.chatgpt.messages.unknown-error')
+    }
+  }
+
   ctx.middleware(async (session, next) => {
-    if (session.parsed?.appel) {
-      return session.execute('chat ' + session.parsed.content)
+    if (session.parsed?.appel && session.parsed?.content) {
+      return await getResponse(session.parsed.content, session, config)
     }
     for (const prefix of config.prefix) {
       if (!prefix || !session.content.startsWith(prefix)) continue
-      return session.execute('chat ' + session.content.slice(config.prefix.length))
+      return await getResponse(session.content.slice(config.prefix.length), session, config)
     }
     return next()
   })
@@ -85,24 +107,6 @@ export function apply(ctx: Context, config: Config) {
         input = await session.prompt()
       }
 
-      const key = getContextKey(session, config)
-
-      try {
-        // ensure the API is properly authenticated (optional)
-        await api.ensureAuth()
-      } catch (err) {
-        return session.text('.invalid-token')
-      }
-
-      try {
-        // send a message and wait for the response
-        const { conversationId, messageId } = conversations.get(key) ?? {}
-        const response = await api.sendMessage({ message: input, conversationId, messageId })
-        conversations.set(key, { conversationId: response.conversationId, messageId: response.messageId })
-        return response.message
-      } catch (error) {
-        logger.warn(error)
-        throw new SessionError('commands.chatgpt.messages.unknown-error')
-      }
+      return getResponse(input, session, config)
     })
 }
