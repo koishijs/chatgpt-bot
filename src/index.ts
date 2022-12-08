@@ -102,7 +102,7 @@ export function apply(ctx: Context, config: Config) {
 
     ctx.command('chatgpt/chat <input:text>')
     .action(async ({ session }, input) => {
-      input = input.trim()
+      input = input?.trim()
       if (!input) {
         await session.send(session.text('.expect-prompt'))
         input = await session.prompt()
