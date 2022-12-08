@@ -9,6 +9,15 @@ export type Interaction = typeof interaction[number]
 export interface Config extends ChatGPT.Config {
   appellation: boolean
   prefix: string[]
+  /**
+   * Configure how to share the conversation context between users:
+   *
+   * - `user`: every user has its own context, across all channels
+   * - `channel`: every channel has its own context, no matter which user is talking
+   * - `both`: every user has its own context in each channel
+   *
+   * @see https://github.com/koishijs/chatgpt-bot/pull/15
+   */
   interaction: Interaction
 }
 
@@ -20,19 +29,10 @@ export const Config: Schema<Config> = Schema.intersect([
       Schema.array(String),
       Schema.transform(String, (prefix) => [prefix]),
     ] as const).description('使用特定前缀触发对话。').default(['!', '！']),
-    /**
-     * Configure how to share the conversation context between users:
-     * 
-     * - `user`: every user has its own context, across all channels
-     * - `channel`: every channel has its own context, no matter which user is talking
-     * - `both`: every user has its own context in each channel
-     * 
-     * @see https://github.com/koishijs/chatgpt-bot/pull/15
-     */
     interaction: Schema.union([
-      Schema.const('user' as const).description('用户上下文'),
-      Schema.const('channel' as const).description('频道上下文'),
-      Schema.const('both' as const).description('频道内用户上下文'),
+      Schema.const('user' as const).description('用户独立'),
+      Schema.const('channel' as const).description('频道独立'),
+      Schema.const('both' as const).description('频道内用户独立'),
     ]).description('上下文共享方式。').default('channel'),
   }),
 ])
@@ -44,7 +44,7 @@ export function apply(ctx: Context, config: Config) {
 
   const api = new ChatGPT(ctx, config)
 
-  const getContextResolver = (session: Session, config: Config) => {
+  const getContextKey = (session: Session, config: Config) => {
     switch (config.interaction) {
       case 'user':
         return session.uid
@@ -70,10 +70,10 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('chatgpt <input:text>')
     .option('reset', '-r')
     .action(async ({ options, session }, input) => {
-      const resolver = getContextResolver(session, config)
+      const key = getContextKey(session, config)
 
       if (options?.reset) {
-        conversations.delete(resolver)
+        conversations.delete(key)
         return session.text('.reset-success')
       }
 
@@ -92,9 +92,9 @@ export function apply(ctx: Context, config: Config) {
 
       try {
         // send a message and wait for the response
-        const { conversationId, messageId } = conversations.get(resolver) ?? {}
+        const { conversationId, messageId } = conversations.get(key) ?? {}
         const response = await api.sendMessage({ message: input, conversationId, messageId })
-        conversations.set(resolver, { conversationId: response.conversationId, messageId: response.messageId })
+        conversations.set(key, { conversationId: response.conversationId, messageId: response.messageId })
         return response.message
       } catch (error) {
         logger.warn(error)
