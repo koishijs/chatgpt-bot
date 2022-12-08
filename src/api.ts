@@ -83,6 +83,10 @@ class ChatGPT {
     } catch (err) {
       if (Quester.isAxiosError(err)) {
         switch (err.response?.status) {
+          case 401:
+            throw new SessionError('commands.chatgpt.messages.unauthorized')
+          case 429:
+            throw new SessionError('commands.chatgpt.messages.too-many-requests')
           case 500:
           case 503:
             throw new SessionError('commands.chatgpt.messages.service-unavailable')
