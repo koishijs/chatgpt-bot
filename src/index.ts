@@ -77,7 +77,7 @@ export function apply(ctx: Context, config: Config) {
         return session.text('.reset-success')
       }
 
-      input = input.trim()
+      input = input?.trim()
       if (!input) {
         await session.send(session.text('.expect-prompt'))
         input = await session.prompt()
