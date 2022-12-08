@@ -43,3 +43,10 @@ ChatGPT 会话令牌。
 - 默认值：`['!', '！']`
 
 消息前缀。带此前缀的消息将被回复。
+
+### interaction
+
+- 类型：`'user' | 'channel' | 'both'`
+- 默认值：`'channel'`
+
+上下文共享方式。详情请参考[对话上下文](./context.md)。
