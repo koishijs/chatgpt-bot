@@ -97,11 +97,12 @@ export function apply(ctx: Context, config: Config) {
 
       try {
         // send a message and wait for the response
-        let conversation: Conversation = conversations.get(key)
+        let request: Conversation = conversations.get(key)
         let action: ChatGPT.Action = input in actions ? actions[input] : 'next'
+        if(action === 'next') request.message = input
         
-        const response = await api.sendMessage(conversation, action)
-        conversations.set(key, { message: input, conversationId: response.conversationId, messageId: response.messageId })
+        const response = await api.sendMessage(request, action)
+        conversations.set(key, { message: request.message, conversationId: response.conversationId, messageId: response.messageId })
         return response.message
       } catch (error) {
         logger.warn(error)
