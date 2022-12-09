@@ -86,7 +86,8 @@ export function apply(ctx: Context, config: Config) {
       try {
         // ensure the API is properly authenticated (optional)
         await api.ensureAuth()
-      } catch (err) {
+      } catch (error) {
+        logger.warn(error)
         return session.text('.invalid-token')
       }
 
