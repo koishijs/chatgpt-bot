@@ -46,13 +46,13 @@ class ChatGPT {
    * @param message - The plaintext message to send.
    * @param opts.conversationId - Optional ID of the previous message in a conversation
    */
-  async sendMessage(conversation: Conversation): Promise<Required<Conversation>> {
+  async sendMessage(conversation: Conversation, action: string): Promise<Required<Conversation>> {
     const { conversationId, messageId = uuidv4(), message } = conversation
 
     const accessToken = await this.refreshAccessToken()
 
     const body: types.ConversationJSONBody = {
-      action: 'next',
+      action,
       conversation_id: conversationId,
       messages: [
         {

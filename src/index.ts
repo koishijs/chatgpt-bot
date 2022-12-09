@@ -1,4 +1,4 @@
-import ChatGPT from './api'
+import ChatGPT, { Conversation } from './api'
 import { Context, Logger, Schema, Session, SessionError } from 'koishi'
 
 const logger = new Logger('chatgpt')
@@ -37,7 +37,7 @@ export const Config: Schema<Config> = Schema.intersect([
   }),
 ])
 
-const conversations = new Map<string, { messageId: string; conversationId: string }>()
+const conversations = new Map<string, Conversation>()
 
 export function apply(ctx: Context, config: Config) {
   ctx.i18n.define('zh', require('./locales/zh-CN'))
@@ -92,9 +92,21 @@ export function apply(ctx: Context, config: Config) {
 
       try {
         // send a message and wait for the response
-        const { conversationId, messageId } = conversations.get(key) ?? {}
-        const response = await api.sendMessage({ message: input, conversationId, messageId })
-        conversations.set(key, { conversationId: response.conversationId, messageId: response.messageId })
+        const conversation: Conversation = conversations.get(key) ?? { message: '', conversationId: undefined, messageId: undefined }
+        let action = 'next'
+        switch (input) {
+          case '重新说':
+              action = 'variant'
+            break
+          case '继续说':
+            action = 'continue'
+            break
+          default:
+            conversation.message = input
+        }
+        
+        const response = await api.sendMessage(conversation, action)
+        conversations.set(key, { message: input, conversationId: response.conversationId, messageId: response.messageId })
         return response.message
       } catch (error) {
         logger.warn(error)
