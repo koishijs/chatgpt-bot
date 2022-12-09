@@ -46,7 +46,7 @@ class ChatGPT {
    * @param message - The plaintext message to send.
    * @param opts.conversationId - Optional ID of the previous message in a conversation
    */
-  async sendMessage(conversation: Conversation, action: string): Promise<Required<Conversation>> {
+  async sendMessage(conversation: Conversation, action: ChatGPT.Action): Promise<Required<Conversation>> {
     const { conversationId, messageId = uuidv4(), message } = conversation
 
     const accessToken = await this.refreshAccessToken()
@@ -170,9 +170,14 @@ class ChatGPT {
 }
 
 namespace ChatGPT {
+  export type Action = 'next' | 'variant' | 'continue'
+  export type Actions = Record<string, Action>
+
   export interface Config {
     sessionToken: string
     endpoint: string
+    keywordContinue: string[]
+    keywordVariant: string[]
     markdown?: boolean
     headers?: Dict<string>
     proxyAgent?: string
@@ -186,6 +191,14 @@ namespace ChatGPT {
     }),
     proxyAgent: Schema.string().role('link').description('使用的代理服务器地址。'),
     markdown: Schema.boolean().hidden().default(false),
+    keywordContinue: Schema.union([
+      Schema.array(String),
+      Schema.transform(String, (prefix) => [prefix]),
+    ] as const).description('触发机器人继续回答的关键词。').default(['继续说', '请继续', '继续']),
+    keywordVariant: Schema.union([
+      Schema.array(String),
+      Schema.transform(String, (prefix) => [prefix]),
+    ] as const).description('触发机器人重新回答的关键词。').default(['重新说', '重试']),
   }).description('登录设置')
 }
 

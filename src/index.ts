@@ -44,6 +44,11 @@ export function apply(ctx: Context, config: Config) {
 
   const api = new ChatGPT(ctx, config)
 
+  const actions: ChatGPT.Actions = {
+    ...Object.fromEntries(config.keywordContinue.map((value) => [value, 'continue'])),
+    ...Object.fromEntries(config.keywordVariant.map((value) => [value, 'variant']))
+  }
+
   const getContextKey = (session: Session, config: Config) => {
     switch (config.interaction) {
       case 'user':
@@ -92,18 +97,8 @@ export function apply(ctx: Context, config: Config) {
 
       try {
         // send a message and wait for the response
-        const conversation: Conversation = conversations.get(key) ?? { message: '', conversationId: undefined, messageId: undefined }
-        let action = 'next'
-        switch (input) {
-          case '重新说':
-              action = 'variant'
-            break
-          case '继续说':
-            action = 'continue'
-            break
-          default:
-            conversation.message = input
-        }
+        let conversation: Conversation = conversations.get(key)
+        let action: ChatGPT.Action = input in actions ? actions[input] : 'next'
         
         const response = await api.sendMessage(conversation, action)
         conversations.set(key, { message: input, conversationId: response.conversationId, messageId: response.messageId })
