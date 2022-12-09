@@ -32,7 +32,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/koishijs/chatgpt-bot/edit/master/docs/:path',
+      pattern: 'https://github.com/koishijs/chatgpt-bot/edit/main/docs/:path',
     },
   },
 })
