@@ -17,13 +17,11 @@ export interface Conversation {
 
 class ChatGPT {
   protected http: Quester
-  protected _endpoint: string
   // stores access tokens for up to 10 seconds before needing to refresh
   protected _accessTokenCache = new ExpiryMap<string, string>(10 * 1000)
 
   constructor(ctx: Context, public config: ChatGPT.Config) {
     this.http = ctx.http.extend(config)
-    this._endpoint = trimSlash(config.endpoint)
   }
 
   async getIsAuthenticated() {
@@ -68,11 +66,9 @@ class ChatGPT {
       parent_message_id: messageId,
     }
 
-    const url = this._endpoint + '/backend-api/conversation'
-
     let data: internal.Readable
     try {
-      const resp = await this.http.axios<internal.Readable>(url, {
+      const resp = await this.http.axios<internal.Readable>('/backend-api/conversation', {
         method: 'POST',
         responseType: 'stream',
         data: body,
@@ -148,7 +144,7 @@ class ChatGPT {
     }
 
     try {
-      const res = await this.http.get(this._endpoint + '/api/auth/session', {
+      const res = await this.http.get('/api/auth/session', {
         headers: {
           cookie: `__Secure-next-auth.session-token=${this.config.sessionToken}`,
         },
