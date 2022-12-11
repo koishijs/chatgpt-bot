@@ -1,5 +1,5 @@
 import ChatGPT from './api'
-import {Context, Logger, Schema, Session, SessionError} from 'koishi'
+import {Context, h, Logger, Schema, Session, SessionError} from 'koishi'
 
 const logger = new Logger('chatgpt')
 
@@ -56,6 +56,10 @@ export function apply(ctx: Context, config: Config) {
     }
   }
 
+  const replyMessage = (session, message: string): string => {
+    return h('quote', {id: session.messageId}) + message
+  }
+
   ctx.middleware(async (session, next) => {
     if (session.parsed?.appel) {
       return session.execute('chatgpt ' + session.parsed.content)
@@ -74,7 +78,7 @@ export function apply(ctx: Context, config: Config) {
 
       if (options?.reset) {
         conversations.delete(key)
-        return session.text('.reset-success')
+        return replyMessage(session, session.text('.reset-success'))
       }
 
       input = input?.trim()
@@ -88,7 +92,7 @@ export function apply(ctx: Context, config: Config) {
         await api.ensureAuth()
       } catch (error) {
         logger.warn(error)
-        return session.text('.invalid-token')
+        return replyMessage(session, session.text('.invalid-token'))
       }
 
       try {
@@ -96,7 +100,7 @@ export function apply(ctx: Context, config: Config) {
         const {conversationId, messageId} = conversations.get(key) ?? {}
         const response = await api.sendMessage({message: input, conversationId, messageId})
         conversations.set(key, {conversationId: response.conversationId, messageId: response.messageId})
-        return response.message
+        return replyMessage(session, response.message)
       } catch (error) {
         logger.warn(error)
         if (error instanceof SessionError) throw error
