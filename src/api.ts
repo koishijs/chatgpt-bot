@@ -1,11 +1,11 @@
 import ExpiryMap from 'expiry-map'
-import { createParser } from 'eventsource-parser'
-import { Context, Dict, Quester, Schema, SessionError, trimSlash } from 'koishi'
-import internal, { Writable } from 'stream'
-import { v4 as uuidv4 } from 'uuid'
+import {createParser} from 'eventsource-parser'
+import {Context, Dict, Quester, Schema, SessionError, trimSlash} from 'koishi'
+import internal, {Writable} from 'stream'
+import {v4 as uuidv4} from 'uuid'
 
 import * as types from './types'
-import { transform } from './utils'
+import {transform} from './utils'
 
 const KEY_ACCESS_TOKEN = 'accessToken'
 
@@ -45,7 +45,7 @@ class ChatGPT {
    * @param opts.conversationId - Optional ID of the previous message in a conversation
    */
   async sendMessage(conversation: Conversation): Promise<Required<Conversation>> {
-    const { conversationId, messageId = uuidv4(), message } = conversation
+    const {conversationId, messageId = uuidv4(), message} = conversation
 
     const accessToken = await this.refreshAccessToken()
 
@@ -102,9 +102,9 @@ class ChatGPT {
       let conversationId: string
       const parser = createParser((event) => {
         if (event.type === 'event') {
-          const { data } = event
+          const {data} = event
           if (data === '[DONE]') {
-            return resolve({ message: response, messageId, conversationId })
+            return resolve({message: response, messageId, conversationId})
           }
           try {
             const parsedData: types.ConversationResponseEvent = JSON.parse(data)
@@ -138,6 +138,9 @@ class ChatGPT {
   }
 
   async refreshAccessToken(): Promise<string> {
+    if (this.config.sessionToken.length <= 0) {
+      return null
+    }
     const cachedAccessToken = this._accessTokenCache.get(KEY_ACCESS_TOKEN)
     if (cachedAccessToken) {
       return cachedAccessToken
@@ -175,13 +178,13 @@ namespace ChatGPT {
   }
 
   export const Config: Schema<Config> = Schema.object({
-    sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌。').required(),
+    sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌，留空则不使用token。'),
     endpoint: Schema.string().description('ChatGPT API 的地址。').default('https://chat.openai.com'),
     headers: Schema.dict(String).description('要附加的额外请求头。').default({
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
     }),
     proxyAgent: Schema.string().role('link').description('使用的代理服务器地址。'),
-    markdown: Schema.boolean().hidden().default(false),
+    markdown: Schema.boolean().hidden().default(false)
   }).description('登录设置')
 }
 

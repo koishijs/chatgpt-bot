@@ -1,5 +1,5 @@
 import ChatGPT from './api'
-import { Context, Logger, Schema, Session, SessionError } from 'koishi'
+import {Context, Logger, Schema, Session, SessionError} from 'koishi'
 
 const logger = new Logger('chatgpt')
 
@@ -51,7 +51,7 @@ export function apply(ctx: Context, config: Config) {
       case 'channel':
         return session.cid
       case 'both':
-        const { platform, channelId, userId } = session
+        const {platform, channelId, userId} = session
         return `${platform}:${channelId}:${userId}`
     }
   }
@@ -69,7 +69,7 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.command('chatgpt <input:text>')
     .option('reset', '-r')
-    .action(async ({ options, session }, input) => {
+    .action(async ({options, session}, input) => {
       const key = getContextKey(session, config)
 
       if (options?.reset) {
@@ -93,9 +93,9 @@ export function apply(ctx: Context, config: Config) {
 
       try {
         // send a message and wait for the response
-        const { conversationId, messageId } = conversations.get(key) ?? {}
-        const response = await api.sendMessage({ message: input, conversationId, messageId })
-        conversations.set(key, { conversationId: response.conversationId, messageId: response.messageId })
+        const {conversationId, messageId} = conversations.get(key) ?? {}
+        const response = await api.sendMessage({message: input, conversationId, messageId})
+        conversations.set(key, {conversationId: response.conversationId, messageId: response.messageId})
         return response.message
       } catch (error) {
         logger.warn(error)
