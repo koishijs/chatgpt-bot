@@ -57,7 +57,7 @@ export function apply(ctx: Context, config: Config) {
   }
 
   const replyMessage = (session, message: string): string => {
-    return h('quote', {id: session.messageId}) + message
+    return (h('quote', {id: session.messageId}) + message + "\n\n" + config?.littleTail?.trim()).trim()
   }
 
   ctx.middleware(async (session, next) => {

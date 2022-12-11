@@ -175,16 +175,18 @@ namespace ChatGPT {
     markdown?: boolean
     headers?: Dict<string>
     proxyAgent?: string
+    littleTail?: string
   }
 
   export const Config: Schema<Config> = Schema.object({
-    sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌，留空则不使用token。'),
+    sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌，留空则不执行刷新token操作。'),
     endpoint: Schema.string().description('ChatGPT API 的地址。').default('https://chat.openai.com'),
     headers: Schema.dict(String).description('要附加的额外请求头。').default({
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
     }),
     proxyAgent: Schema.string().role('link').description('使用的代理服务器地址。'),
-    markdown: Schema.boolean().hidden().default(false)
+    markdown: Schema.boolean().hidden().default(false),
+    littleTail: Schema.string().description('小尾巴。').default('Powered by ChatGPT ® OpenAI'),
   }).description('登录设置')
 }
 
