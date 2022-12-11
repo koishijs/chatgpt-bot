@@ -57,7 +57,7 @@ export function apply(ctx: Context, config: Config) {
   }
 
   ctx.middleware(async (session, next) => {
-    if (session.parsed?.appel) {
+    if (session.parsed?.appel && config.appellation) {
       return session.execute('chatgpt ' + session.parsed.content)
     }
     for (const prefix of config.prefix) {
