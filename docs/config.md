@@ -9,6 +9,13 @@
 
 ChatGPT 会话令牌。
 
+### cloudflareToken
+
+- 类型：`string`
+- 必选项
+
+Cloudflare 会话令牌。
+
 ### endpoint
 
 - 类型：`string`

@@ -7,7 +7,15 @@
 1. 通过 <https://chat.openai.com/chat> 注册并登录。
 2. 打开浏览器开发者工具，切换到 Application 标签页。
 3. 在左侧的 Storage - Cookies 中找到 `__Secure-next-auth.session-token` 一行并复制其值。
-4. 将值填写到 `sessionToken` 字段并启用插件。
+4. 将值填写到 `sessionToken` 字段。
+5. 在左侧的 Storage - Cookies 中找到 `cf_clearance` 一行并复制其值。
+6. 将值填写到 `cloudflareToken` 字段并启用插件。
+
+::: warning
+如果你使用了代理，请确保你的浏览器和 `chatgpt` 插件**连接到同一个代理服务器**！
+
+如果你使用代理后仍然提示 `会话令牌无效，请联系管理员。` 你可以**关闭代理并刷新页面**重新获取 `cf_clearance`
+:::
 
 ## 使用方法
 
