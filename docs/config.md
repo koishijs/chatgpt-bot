@@ -14,7 +14,7 @@ ChatGPT 会话令牌。
 - 类型：`string`
 - 必选项
 
-Cloudflare 会话令牌。
+Cloudflare 令牌。
 
 ### endpoint
 
