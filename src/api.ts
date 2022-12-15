@@ -77,7 +77,6 @@ class ChatGPT {
           cookie: `cf_clearance=${this.config.cloudflareToken};__Secure-next-auth.session-token=${this.config.sessionToken}`,
           referer: 'https://chat.openai.com/chat',
           authority: 'chat.openai.com',
-          accept: '*/*' 
         },
       })
 
@@ -153,7 +152,6 @@ class ChatGPT {
           cookie: `cf_clearance=${this.config.cloudflareToken};__Secure-next-auth.session-token=${this.config.sessionToken}`,
           referer: 'https://chat.openai.com/chat',
           authority: 'chat.openai.com',
-          accept: '*/*' 
         },
       })
 
