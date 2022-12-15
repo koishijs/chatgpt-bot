@@ -75,7 +75,6 @@ class ChatGPT {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           cookie: `cf_clearance=${this.config.cloudflareToken};__Secure-next-auth.session-token=${this.config.sessionToken}`,
-          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
           referer: 'https://chat.openai.com/chat',
           authority: 'chat.openai.com',
           accept: '*/*' 
@@ -152,7 +151,6 @@ class ChatGPT {
       const res = await this.http.get('/api/auth/session', {
         headers: {
           cookie: `cf_clearance=${this.config.cloudflareToken};__Secure-next-auth.session-token=${this.config.sessionToken}`,
-          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
           referer: 'https://chat.openai.com/chat',
           authority: 'chat.openai.com',
           accept: '*/*' 
@@ -186,7 +184,7 @@ namespace ChatGPT {
 
   export const Config: Schema<Config> = Schema.object({
     sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌。').required(),
-    cloudflareToken: Schema.string().role('secret').description('CloudFlare 会话令牌。').required(),
+    cloudflareToken: Schema.string().role('secret').description('Cloudflare 会话令牌。').required(),
     endpoint: Schema.string().description('ChatGPT API 的地址。').default('https://chat.openai.com'),
     headers: Schema.dict(String).description('要附加的额外请求头。').default({
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
