@@ -12,7 +12,12 @@
     "name": "Maiko Tan",
     "email": "maiko.tan.coding@gmail.com"
   },
-  "maintainers": [
+  "contributors": [
+    {
+      "name": "Maiko Tan",
+      "email": "maiko.tan.coding@gmail.com"
+    },
+    "Seidko <seidko.coding@gmail.com>",
     "Shigma <shigma10826@gmail.com>"
   ],
   "license": "MIT",
@@ -49,22 +54,22 @@
     "chat"
   ],
   "peerDependencies": {
-    "koishi": "^4.10.6"
+    "koishi": "^4.12.0"
   },
   "devDependencies": {
-    "@koishijs/vitepress": "^1.5.3",
+    "@koishijs/vitepress": "^1.6.5",
     "@types/marked": "^4.0.8",
     "@types/node": "^17.0.45",
     "atsc": "^1.2.2",
-    "koishi": "^4.10.6",
-    "sass": "^1.57.1",
-    "typescript": "^4.9.4",
-    "vitepress": "1.0.0-alpha.26"
+    "koishi": "^4.12.0",
+    "sass": "^1.58.3",
+    "typescript": "^4.9.5",
+    "vitepress": "1.0.0-alpha.34"
   },
   "dependencies": {
     "eventsource-parser": "^0.0.5",
     "expiry-map": "^2.0.0",
-    "marked": "^4.2.4",
+    "marked": "^4.2.12",
     "uuid": "^9.0.0"
   }
 }
