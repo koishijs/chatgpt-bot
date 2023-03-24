@@ -40,11 +40,10 @@ export const Config: Schema<Config> = Schema.intersect([
 
 const conversations = new Map<string, { messageId: string; conversationId: string }>()
 
-export async function apply(ctx: Context, config: Config) {
+export function apply(ctx: Context, config: Config) {
   ctx.i18n.define('zh', require('./locales/zh-CN'))
 
   const api = new ChatGPT(ctx)
-  await api.start()
 
   const getContextKey = (session: Session, config: Config) => {
     switch (config.interaction) {

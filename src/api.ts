@@ -24,12 +24,14 @@ declare module '@koishijs/cache' {
 class ChatGPT {
   protected cookies: CacheTable<Tables['chatgpt/cookies']>
   protected page: Page
+  protected ready: Promise<void>
 
   constructor(protected ctx: Context) {
     this.cookies = ctx.cache('chatgpt/cookies')
+    this.ready = this.start()
   }
 
-  async start() {
+  protected async start() {
     this.page = await this.ctx.puppeteer.page()
     let sessionToken = await this.cookies.get('session-token')
     if (sessionToken) await this.page.setCookie({
@@ -54,6 +56,7 @@ class ChatGPT {
   }
 
   async getIsAuthenticated() {
+    await this.ready
     try {
       await this.refreshAccessToken()
       return true
@@ -63,6 +66,7 @@ class ChatGPT {
   }
 
   async ensureAuth() {
+    await this.ready
     return await this.refreshAccessToken()
   }
 
@@ -74,6 +78,7 @@ class ChatGPT {
    * @param opts.conversationId - Optional ID of the previous message in a conversation
    */
   async sendMessage(conversation: Conversation): Promise<Required<Conversation>> {
+    await this.ready
     const { conversationId, messageId = uuidv4(), message } = conversation
 
     const accessToken = await this.refreshAccessToken()
@@ -154,6 +159,7 @@ class ChatGPT {
   }
 
   async refreshAccessToken(): Promise<string> {
+    await this.ready
     let accessToken = await this.cookies.get(KEY_ACCESS_TOKEN)
     if (!accessToken) {
       accessToken = await this.page.evaluate(() => {
