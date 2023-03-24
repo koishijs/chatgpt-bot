@@ -6,7 +6,9 @@ const logger = new Logger('chatgpt')
 const interaction = ['user', 'channel', 'both'] as const
 export type Interaction = typeof interaction[number]
 
-export interface Config extends ChatGPT.Config {
+export const using = ['puppeteer', 'cache'] as const
+
+export interface Config{
   appellation: boolean
   prefix: string[]
   /**
@@ -22,7 +24,6 @@ export interface Config extends ChatGPT.Config {
 }
 
 export const Config: Schema<Config> = Schema.intersect([
-  ChatGPT.Config,
   Schema.object({
     appellation: Schema.boolean().description('是否使用称呼触发对话。').default(true),
     prefix: Schema.union([
@@ -39,10 +40,11 @@ export const Config: Schema<Config> = Schema.intersect([
 
 const conversations = new Map<string, { messageId: string; conversationId: string }>()
 
-export function apply(ctx: Context, config: Config) {
+export async function apply(ctx: Context, config: Config) {
   ctx.i18n.define('zh', require('./locales/zh-CN'))
 
-  const api = new ChatGPT(ctx, config)
+  const api = new ChatGPT(ctx)
+  await api.start()
 
   const getContextKey = (session: Session, config: Config) => {
     switch (config.interaction) {
@@ -51,8 +53,7 @@ export function apply(ctx: Context, config: Config) {
       case 'channel':
         return session.cid
       case 'both':
-        const { platform, channelId, userId } = session
-        return `${platform}:${channelId}:${userId}`
+        return session.fid
     }
   }
 
