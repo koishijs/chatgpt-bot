@@ -68,7 +68,7 @@ class ChatGPT {
 
     let data: internal.Readable
     try {
-      const resp = await this.http.axios<internal.Readable>('/backend-api/conversation', {
+      const resp = await this.http.axios<internal.Readable>(this.config.conversationEndpoint, {
         method: 'POST',
         responseType: 'stream',
         data: body,
@@ -145,9 +145,12 @@ class ChatGPT {
     if (cachedAccessToken) {
       return cachedAccessToken
     }
+    if (this.config.accessToken) {
+      return this.config.accessToken
+    }
 
     try {
-      const res = await this.http.get('/api/auth/session', {
+      const res = await this.http.get(this.config.sessionEndpoint, {
         headers: {
           cookie: `cf_clearance=${this.config.cloudflareToken};__Secure-next-auth.session-token=${this.config.sessionToken}`,
           referer: 'https://chat.openai.com/chat',
@@ -172,18 +175,23 @@ class ChatGPT {
 
 namespace ChatGPT {
   export interface Config {
+    accessToken: string
     sessionToken: string
     cloudflareToken: string
     endpoint: string
+    conversationEndpoint: string
     markdown?: boolean
     headers?: Dict<string>
     proxyAgent?: string
   }
 
   export const Config: Schema<Config> = Schema.object({
+    endpoint: koishi_1.Schema.string().description('ChatGPT API 的域名。').default('https://chat.openai.com'),
+    conversationEndpoint: koishi_1.Schema.string().description('ChatGPT API 的对话端点。').default('/backend-api/conversation'),
+    sessionEndpoint: koishi_1.Schema.string().description('ChatGPT API 的记录端点。').default('/api/auth/session'),
+    accessToken: koishi_1.Schema.string().description('ChatGPT 会话令牌。为空时可自动获取，手动访问获取：https://chat.openai.com/api/auth/session').default(''),
     sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌。').required(),
     cloudflareToken: Schema.string().role('secret').description('Cloudflare 令牌。').required(),
-    endpoint: Schema.string().description('ChatGPT API 的地址。').default('https://chat.openai.com'),
     headers: Schema.dict(String).description('要附加的额外请求头。').default({
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
     }),
