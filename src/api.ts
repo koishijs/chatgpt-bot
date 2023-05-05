@@ -108,7 +108,7 @@ class ChatGPT {
       let messageId: string
       let conversationId: string
       const parser = createParser((event) => {
-        if (event.type === 'event') {
+        if (event.type === 'event' && event.event !== 'ping') {
           const { data } = event
           if (data === '[DONE]') {
             return resolve({ message: response, messageId, conversationId })
