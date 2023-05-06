@@ -45,10 +45,14 @@ class ChatGPT {
    * @param opts.conversationId - Optional ID of the previous message in a conversation
    */
   async sendMessage(conversation: Conversation): Promise<Required<Conversation>> {
-    const { conversationId, messageId = uuidv4(), message } = conversation
+    let { conversationId, messageId = uuidv4(), message } = conversation
 
     const accessToken = await this.refreshAccessToken()
-
+    
+    if(!conversationId){
+      message = this.config.initialPrompt + "\n" + message
+    }
+    
     const body: types.ConversationJSONBody = {
       action: 'next',
       conversation_id: conversationId,
@@ -62,13 +66,13 @@ class ChatGPT {
           },
         },
       ],
-      model: 'text-davinci-002-render',
+      model: this.config.model,
       parent_message_id: messageId,
     }
 
     let data: internal.Readable
     try {
-      const resp = await this.http.axios<internal.Readable>('/backend-api/conversation', {
+      const resp = await this.http.axios<internal.Readable>(this.config.conversationEndpoint, {
         method: 'POST',
         responseType: 'stream',
         data: body,
@@ -104,7 +108,7 @@ class ChatGPT {
       let messageId: string
       let conversationId: string
       const parser = createParser((event) => {
-        if (event.type === 'event') {
+        if (event.type === 'event' && event.event !== 'ping') {
           const { data } = event
           if (data === '[DONE]') {
             return resolve({ message: response, messageId, conversationId })
@@ -145,9 +149,12 @@ class ChatGPT {
     if (cachedAccessToken) {
       return cachedAccessToken
     }
+    if (this.config.accessToken) {
+      return this.config.accessToken
+    }
 
     try {
-      const res = await this.http.get('/api/auth/session', {
+      const res = await this.http.get(this.config.sessionEndpoint, {
         headers: {
           cookie: `cf_clearance=${this.config.cloudflareToken};__Secure-next-auth.session-token=${this.config.sessionToken}`,
           referer: 'https://chat.openai.com/chat',
@@ -172,23 +179,35 @@ class ChatGPT {
 
 namespace ChatGPT {
   export interface Config {
+    accessToken?: string
     sessionToken: string
     cloudflareToken: string
     endpoint: string
+    conversationEndpoint: string
+    sessionEndpoint: string
     markdown?: boolean
     headers?: Dict<string>
     proxyAgent?: string
+    model: string
+    initialPrompt?: string
+    timeout?: number
   }
 
   export const Config: Schema<Config> = Schema.object({
+    endpoint: Schema.string().description('ChatGPT API 的域名。').default('https://chat.openai.com'),
+    conversationEndpoint: Schema.string().description('ChatGPT API 的对话端点。').default('/backend-api/conversation'),
+    sessionEndpoint: Schema.string().description('ChatGPT API 的记录端点。').default('/api/auth/session'),
+    accessToken: Schema.string().description('ChatGPT 会话令牌。为空时可自动获取，手动访问获取：https://chat.openai.com/api/auth/session').default(''),
     sessionToken: Schema.string().role('secret').description('ChatGPT 会话令牌。').required(),
     cloudflareToken: Schema.string().role('secret').description('Cloudflare 令牌。').required(),
-    endpoint: Schema.string().description('ChatGPT API 的地址。').default('https://chat.openai.com'),
+    initialPrompt: Schema.string().description('初始提示词'),
+    model: Schema.string().description('模型').default('text-davinci-002-render'),
     headers: Schema.dict(String).description('要附加的额外请求头。').default({
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
     }),
     proxyAgent: Schema.string().role('link').description('使用的代理服务器地址。'),
     markdown: Schema.boolean().hidden().default(false),
+    timeout: Schema.number().description('访问超时。').default(60000),
   }).description('登录设置')
 }
 
