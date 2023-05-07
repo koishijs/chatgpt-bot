@@ -1,8 +1,7 @@
 import { Context, Dict, Schema, SessionError, Time } from 'koishi'
 import { v4 as uuidv4 } from 'uuid'
 import { CacheTable, Tables } from '@koishijs/cache'
-import {} from 'koishi-plugin-puppeteer'
-import { Page } from 'puppeteer-core'
+import { Page } from 'koishi-plugin-puppeteer'
 
 import * as types from './types'
 import { transform } from './utils'
@@ -121,15 +120,13 @@ class ChatGPT {
         if (!res.ok) return reject(res.status)
 
         let data: any
-        setTimeout(() => resolve(data), 2 * 60 * 1000) // There is browser environment, couldn't use `Time`
+        setTimeout(() => resolve(data), 2 * 60 * 1000)
         res.body.pipeTo(new WritableStream({
           write(chunk) {
-            const chunks = decoder.decode(chunk).split('\n')
-            console.log('Receiving...')
+            const chunks = decoder.decode(chunk).split('\n')\
             for (const chunk of chunks) {
               if (!chunk) continue
               if (chunk.startsWith('data: [DONE]')) {
-                console.log('Done.')
                 return resolve(data)
               }
               try {

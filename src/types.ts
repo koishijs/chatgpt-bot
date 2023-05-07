@@ -94,13 +94,12 @@ export interface Prompt {
   /** The ID of the prompt */
   id: string
   /** The role played in the prompt */
-  role: Role
   /** The author of the message */
   author: MessageAuthor
 }
 
 export interface MessageAuthor {
-  role: 'system' | 'assistant' | 'user'
+  role: Role
 }
 
 export interface PromptContent {

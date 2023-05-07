@@ -59,8 +59,7 @@
   "devDependencies": {
     "@koishijs/vitepress": "^1.6.5",
     "@koishijs/cache": "^0.1.4",
-    "koishi-plugin-puppeteer": "^3.4.11",
-    "puppeteer-core": "^19.8.0",
+    "koishi-plugin-puppeteer": "^3.5.0",
     "@types/marked": "^4.0.8",
     "@types/node": "^17.0.45",
     "atsc": "^1.2.2",
