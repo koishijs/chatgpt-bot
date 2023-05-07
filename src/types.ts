@@ -94,6 +94,11 @@ export interface Prompt {
   /** The ID of the prompt */
   id: string
   /** The role played in the prompt */
+  /** The author of the message */
+  author: MessageAuthor
+}
+
+export interface MessageAuthor {
   role: Role
 }
 

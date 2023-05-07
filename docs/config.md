@@ -2,45 +2,12 @@
 
 ## 登录设置
 
-### sessionToken
-
-- 类型：`string`
-- 必选项
-
-ChatGPT 会话令牌。
-
-### cloudflareToken
-
-- 类型：`string`
-- 必选项
-
-Cloudflare 令牌。
-
-### endpoint
-
-- 类型：`string`
-- 默认值：`https://chat.openai.com/`
-
-ChatGPT API 的地址。
-
-### headers
-
-- 类型：`Dict<string>`
-
-要附加的额外请求头。
-
-### proxyAgent
-
-- 类型：`string`
-
-使用的代理服务器地址。
-
-### markdown
+<!-- ### markdown
 
 - 类型：`boolean`
 - 默认值：`false`
 
-是否以 Markdown 格式回复。
+是否以 Markdown 格式回复。 -->
 
 ## 基础设置
 
