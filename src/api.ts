@@ -1,12 +1,12 @@
 import { Context, Dict, Schema, SessionError, Time } from 'koishi'
 import { v4 as uuidv4 } from 'uuid'
-import { CacheTable, Tables } from '@koishijs/cache'
-import { Page } from 'koishi-plugin-puppeteer'
+import type { } from '@koishijs/cache'
+import type { Page } from 'koishi-plugin-puppeteer'
 
 import * as types from './types'
-import { transform } from './utils'
 
-const KEY_ACCESS_TOKEN = 'accessToken'
+const KEY_ACCESS_TOKEN = 'access-token'
+const KEY_SESSION_TOKEN = 'session-token'
 
 export interface Conversation {
   conversationId?: string
@@ -21,18 +21,16 @@ declare module '@koishijs/cache' {
 }
 
 class ChatGPT {
-  protected cookies: CacheTable<Tables['chatgpt/cookies']>
   protected page: Page
   protected ready: Promise<void>
 
   constructor(protected ctx: Context) {
-    this.cookies = ctx.cache('chatgpt/cookies')
     this.ready = this.start()
   }
 
   protected async start() {
     this.page = await this.ctx.puppeteer.page()
-    let sessionToken = await this.cookies.get('session-token')
+    let sessionToken = await this.ctx.cache.get('chatgpt/cookies', KEY_SESSION_TOKEN)
     if (sessionToken) await this.page.setCookie({
       name: '__Secure-next-auth.session-token',
       value: sessionToken,
@@ -51,7 +49,7 @@ class ChatGPT {
     const cookies = await this.page.cookies('https://chat.openai.com')
     sessionToken = cookies.find(c => c.name === '__Secure-next-auth.session-token')?.value
     if (!sessionToken) throw new Error('Can not get session token.')
-    await this.cookies.set('session-token', sessionToken, Time.day * 30)
+    await this.ctx.cache.set('chatgpt/cookies', KEY_SESSION_TOKEN, sessionToken, Time.day * 30)
   }
 
   async getIsAuthenticated() {
@@ -91,7 +89,6 @@ class ChatGPT {
           author: {
             role: 'user'
           },
-          role: 'user',
           content: {
             content_type: 'text',
             parts: [
@@ -123,7 +120,7 @@ class ChatGPT {
         setTimeout(() => resolve(data), 2 * 60 * 1000)
         res.body.pipeTo(new WritableStream({
           write(chunk) {
-            const chunks = decoder.decode(chunk).split('\n')\
+            const chunks = decoder.decode(chunk).split('\n')
             for (const chunk of chunks) {
               if (!chunk) continue
               if (chunk.startsWith('data: [DONE]')) {
@@ -157,14 +154,14 @@ class ChatGPT {
 
   async refreshAccessToken(): Promise<string> {
     await this.ready
-    let accessToken = await this.cookies.get(KEY_ACCESS_TOKEN)
+    let accessToken = await this.ctx.cache.get('chatgpt/cookies', KEY_ACCESS_TOKEN)
     if (!accessToken) {
       accessToken = await this.page.evaluate(() => {
         return fetch('https://chat.openai.com/api/auth/session')
           .then(r => r.json())
           .then(r => r.accessToken)
       })
-      await this.cookies.set(KEY_ACCESS_TOKEN, accessToken, Time.hour)
+      await this.ctx.cache.set('chatgpt/cookies', KEY_ACCESS_TOKEN, accessToken, Time.hour)
     }
 
     return accessToken
