@@ -58,6 +58,7 @@
     "koishi": "^4.12.0"
   },
   "devDependencies": {
+    "koishi-plugin-puppeteer": "^3.5.0",
     "@koishijs/vitepress": "^1.6.5",
     "@koishijs/cache": "^2.0.0-alpha.0",
     "@types/marked": "^4.0.8",
